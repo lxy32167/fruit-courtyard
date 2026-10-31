@@ -49,8 +49,10 @@ Matter.js 使用 MIT License，见 vendor/MATTER-LICENSE.txt。
 摇晃加强为约 1.5 秒，包含更大的向上抛动和多次横向推力，结束后有短暂落稳保护。
 
 线上版本
-已部署：https://fruit-courtyard-ipad.zfmhcvy4f5.chatgpt.site
-此地址由 Sites 托管，已设为公开访问；当前用户实测出现 Cloudflare 拦截页，暂不能作为可用入口。
+游戏入口：https://lxy32167.github.io/fruit-courtyard/
+代码仓库：https://github.com/lxy32167/fruit-courtyard
+使用 GitHub Pages 托管，仓库及游戏均公开；推送 main 分支后自动发布，不依赖本地电脑运行。
+原 Sites 地址 https://fruit-courtyard-ipad.zfmhcvy4f5.chatgpt.site 已设为公开，但用户实测出现 Cloudflare 拦截页，暂不作为游戏入口。
 在 iPad Safari 打开后，可通过分享菜单添加到主屏幕。
 线上与本地试玩为不同地址，进度和最高分不会自动迁移。
 部署源码及配置：../sites/fruit-courtyard/；部署结果：../sites/fruit-courtyard-deployment.json。

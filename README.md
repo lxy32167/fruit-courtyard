@@ -2,6 +2,8 @@
 
 适合 iPad Safari 的个人水果合成小游戏，使用静态 HTML、CSS、JavaScript 和 Matter.js。
 
+游戏入口：https://lxy32167.github.io/fruit-courtyard/
+
 ## 本地运行
 
 ```sh
@@ -20,7 +22,8 @@ python3 serve.py
 
 ## 部署
 
-将 `game/` 作为静态网站目录发布即可，无需构建或后端。背景音乐按需加载。
+当前使用 GitHub Pages，从 `main` 分支根目录发布，首页自动进入 `game/`。推送更新后由 GitHub 自动发布。
+也可以将 `game/` 作为静态网站目录部署到其他托管服务，无需构建或后端。背景音乐按需加载。
 原 Sites 地址当前出现 Cloudflare 拦截，暂不作为可用游戏入口。
 
 ## 素材与依赖
