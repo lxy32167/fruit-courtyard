@@ -34,6 +34,14 @@ export class GameRenderer {
     ctx.globalAlpha = opacity;
     // Fit the visible body to the collider, leaving a little extra room for stems.
     const width = radius * 2.09 * scale;
+    if (!image.complete || !image.naturalWidth) {
+      ctx.fillStyle = FRUITS[level].color;
+      ctx.beginPath();ctx.arc(0, 0, radius * scale, 0, Math.PI * 2);ctx.fill();
+      ctx.fillStyle = '#493d2e';ctx.textAlign = 'center';ctx.textBaseline = 'middle';
+      ctx.font = `bold ${Math.max(10, Math.min(18, radius * .55))}px -apple-system, sans-serif`;
+      ctx.fillText(FRUITS[level].name, 0, 0);
+      ctx.restore();return;
+    }
     const height = width * image.naturalHeight / image.naturalWidth;
     ctx.drawImage(image, -width / 2, -height / 2 - radius * .025, width, height);
     ctx.restore();

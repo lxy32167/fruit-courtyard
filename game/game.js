@@ -42,8 +42,16 @@ function syncAudioButtons() {
   $('sound-button').setAttribute('aria-label', audio.enabled ? '关闭音效' : '开启音效');
   $('sound-button').querySelector('use').setAttribute('href', audio.enabled ? '#i-sound' : '#i-muted');
   $('music-button').setAttribute('aria-pressed', String(audio.musicEnabled));
-  $('music-button').textContent = audio.musicEnabled ? '已开启' : '已关闭';
+  const retry = ['error', 'blocked'].includes(audio.musicState);
+  const loading = audio.musicEnabled && audio.musicState === 'loading';
+  $('music-button').textContent = retry ? '点击重试' : loading ? '加载中…' : audio.musicEnabled ? '已开启' : '已关闭';
+  $('music-toggle').setAttribute('aria-pressed', String(audio.musicEnabled));
+  const label = retry ? '音乐未播放，点击重试' : loading ? '音乐加载中，点击关闭' : audio.musicEnabled ? '关闭背景音乐' : '开启背景音乐';
+  $('music-toggle').setAttribute('aria-label', label);
+  $('music-toggle').title = label;
+  $('music-label').textContent = retry ? '重试' : loading ? '加载中' : audio.musicEnabled ? '音乐' : '已关';
 }
+audio.onMusicStateChange = syncAudioButtons;
 
 function updateUI() {
   $('score').textContent = state.score;
@@ -305,10 +313,12 @@ $('play-button').addEventListener('click', () => {
 });
 $('pause-button').addEventListener('click', pause);
 $('sound-button').addEventListener('click', () => { audio.toggleSound();syncAudioButtons(); });
-$('music-button').addEventListener('click', () => {
-  audio.unlock();audio.toggleMusic();syncAudioButtons();
+function toggleMusic() {
+  audio.toggleMusic();audio.unlock();syncAudioButtons();
   if (audio.musicEnabled && state.status !== 'playing') toast('开始或继续游戏时播放音乐');
-});
+}
+$('music-button').addEventListener('click', toggleMusic);
+$('music-toggle').addEventListener('click', toggleMusic);
 
 function openDialog(id) {
   resumeAfterDialog = state.status === 'playing';
@@ -348,13 +358,14 @@ function frame(timestamp) {
   requestAnimationFrame(frame);
 }
 
-async function init() {
+function init() {
   syncAudioButtons();updateUI();
   try {
     if (!window.Matter) throw new Error('物理引擎未能加载');
-    const images = await Promise.all(FRUITS.map(fruit => new Promise((resolve, reject) => {
-      const img = new Image();img.onload = () => resolve(img);img.onerror = () => reject(new Error('水果图片未能加载'));img.src = fruit.image;
-    })));
+    // A slow sprite must not prevent starting or restoring a game.
+    const images = FRUITS.map(fruit => {
+      const img = new Image();img.src = fruit.image;return img;
+    });
     state.renderer = new GameRenderer(canvas, images);
     state.status = 'welcome';
     if (saved) {
