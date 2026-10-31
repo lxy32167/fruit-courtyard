@@ -1,0 +1,8 @@
+.DS_Store
+reference/
+sites/
+game/preview-*.jpg
+__pycache__/
+node_modules/
+.env
+.env.*

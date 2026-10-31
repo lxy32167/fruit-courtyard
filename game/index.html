@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8f2df" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="水果小院" />
+    <meta name="description" content="属于你的一小篮快乐。轻轻放下水果，把小小的相遇合成大西瓜。" />
+    <title>水果小院 · 合成大西瓜</title>
+    <link rel="icon" href="assets/fruits/fruit-11.png" />
+    <link rel="apple-touch-icon" href="assets/icon-180.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="vendor/matter.min.js"></script>
+    <script type="module" src="game.js"></script>
+  </head>
+  <body>
+    <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14c6 5 14 0 15-10Z"/><path d="m4 21 11-12"/></symbol>
+      <symbol id="i-cup" viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0V3ZM8 5H4v3c0 3 2 4 5 4m7-7h4v3c0 3-2 4-5 4m-3 2v6m-4 1h8"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="m11 4-5 4H3v8h3l5 4V4Zm4 4a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+      <symbol id="i-muted" viewBox="0 0 24 24"><path d="m11 4-5 4H3v8h3l5 4V4Zm5 5 5 6m0-6-5 6"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+      <symbol id="i-restart" viewBox="0 0 24 24"><path d="M4 9a8 8 0 1 1 0 7m0-13v6h6"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3v.1"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 17V5l11-2v12M9 8l11-2"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="16" rx="3" ry="2"/></symbol>
+    </svg>
+
+    <div class="page-decoration decoration-left" aria-hidden="true"></div>
+    <div class="page-decoration decoration-right" aria-hidden="true"></div>
+
+    <main class="app">
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-mark"><svg><use href="#i-leaf"/></svg></span>
+          <div><h1>水果小院<span class="brand-dot">。</span></h1><p>A LITTLE JOY, EVERY DROP</p></div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button" id="sound-button" aria-label="关闭音效" aria-pressed="true" title="音效"><svg><use href="#i-sound"/></svg></button>
+          <button class="icon-button" id="help-button" aria-label="玩法说明" title="玩法说明"><svg><use href="#i-help"/></svg></button>
+        </div>
+      </header>
+
+      <section class="scoreboard" aria-label="游戏分数">
+        <div class="score-main"><span class="eyebrow">本局得分</span><strong id="score">0</strong></div>
+        <div class="score-best"><span class="eyebrow"><svg><use href="#i-cup"/></svg> 最高纪录</span><strong id="best">0</strong></div>
+        <div class="next-fruit"><span class="eyebrow">下一颗</span><div class="next-fruit-image"><img id="next-image" src="assets/fruits/fruit-01.png" alt="下一颗：樱桃" /></div></div>
+      </section>
+
+      <section class="play-area" aria-label="水果合成游戏">
+        <div class="board-frame" id="board-frame">
+          <canvas id="game-canvas" width="420" height="600" tabindex="0" aria-label="水果篮。手指拖动选择落点，松手投放；也可以使用左右方向键移动、空格投放。"></canvas>
+          <div class="board-hint" id="board-hint"><span></span> 拖动瞄准 · 松手落下 <span></span></div>
+          <div class="danger-message" id="danger-message" hidden>快满啦，试着合成下面的水果！</div>
+          <div class="tool-prompt" id="tool-prompt" hidden><span id="tool-instruction"></span><button id="cancel-tool">取消</button></div>
+          <div class="merge-announcement" id="merge-announcement" role="status" aria-live="polite"></div>
+
+          <div class="game-overlay" id="game-overlay">
+            <div class="welcome-fruits" id="welcome-fruits" aria-hidden="true">
+              <img class="welcome-peach" src="assets/fruits/fruit-07.png" alt="" />
+              <img class="welcome-melon" src="assets/fruits/fruit-11.png" alt="" />
+              <img class="welcome-orange" src="assets/fruits/fruit-05.png" alt="" />
+              <span class="sparkle sparkle-one">✦</span><span class="sparkle sparkle-two">✧</span>
+            </div>
+            <span class="overlay-kicker" id="overlay-kicker">今天，也收获一点快乐</span>
+            <h2 id="overlay-title">从一颗小水果开始</h2>
+            <p id="overlay-description">让一样的水果碰在一起，<br />慢慢合出属于你的大西瓜。</p>
+            <div class="end-score" id="end-score" hidden><span>本局得分</span><strong id="final-score">0</strong></div>
+            <button class="primary-button" id="play-button" disabled><span id="play-label">正在准备水果…</span><svg><use href="#i-arrow"/></svg></button>
+            <span class="overlay-note" id="overlay-note">不赶时间，慢慢玩</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-bar" aria-label="道具">
+        <button class="tool-button" data-tool="bomb" aria-pressed="false" disabled><img src="assets/props/bomb.png" alt="" /><span class="tool-name">炸掉水果</span><span class="tool-count" aria-hidden="true">1</span></button>
+        <button class="tool-button" data-tool="tidy" disabled><img src="assets/props/tidy.png" alt="" /><span class="tool-name">去掉最小</span><span class="tool-count" aria-hidden="true">1</span></button>
+        <button class="tool-button" data-tool="upgrade" aria-pressed="false" disabled><img src="assets/props/upgrade.png" alt="" /><span class="tool-name">升一级</span><span class="tool-count" aria-hidden="true">1</span></button>
+        <button class="tool-button" data-tool="shake" disabled><img src="assets/props/shake.png" alt="" /><span class="tool-name">摇一摇</span><span class="tool-count" aria-hidden="true">1</span></button>
+      </section>
+
+      <section class="evolution" aria-label="水果合成顺序">
+        <div class="evolution-heading"><span>成长图鉴</span><span id="progress-label">目标：合出大西瓜</span></div>
+        <div class="fruit-chain" id="fruit-chain"></div>
+      </section>
+
+      <footer class="game-footer">
+        <button class="text-button" id="restart-button" aria-label="重新开始本局"><svg><use href="#i-restart"/></svg>重新开始</button>
+        <span class="footer-note" id="footer-note">小小水果，大大快乐</span>
+        <button class="text-button" id="pause-button" disabled><svg><use href="#i-pause"/></svg>暂停</button>
+      </footer>
+    </main>
+
+    <dialog id="help-dialog" class="dialog">
+      <button class="icon-button dialog-close" data-close="help-dialog" aria-label="关闭玩法说明"><svg><use href="#i-close"/></svg></button>
+      <span class="dialog-kicker">一点点小提示</span><h2>一碰，就有好事发生</h2>
+      <div class="how-to-merge" aria-hidden="true"><img src="assets/fruits/fruit-01.png" alt="" /><span>+</span><img src="assets/fruits/fruit-01.png" alt="" /><svg><use href="#i-arrow"/></svg><img src="assets/fruits/fruit-02.png" alt="" /></div>
+      <ol class="instructions"><li><b>选一个好位置</b><span>在篮子里左右拖动，松手就会落下。轻点也可以投放。</span></li><li><b>相同水果，合成一颗更大的</b><span>跟着成长图鉴，一路合出大西瓜。两颗西瓜还能合成额外奖励。</span></li><li><b>留一点呼吸的空间</b><span>水果持续超出虚线就会结束。切换应用时，游戏会自动暂停。</span></li></ol>
+      <div class="music-setting"><span><svg><use href="#i-music"/></svg>轻松背景音乐</span><button id="music-button" class="switch-button" aria-pressed="false">已关闭</button></div>
+      <p class="help-footnote">每局每种道具可用 1 次，用后显示「已用」，重开后恢复。取消选择或点空白不扣次数。炸弹点掉一颗水果；「去掉最小」每次只移除一颗最小水果；升级点选一颗水果升一级（西瓜已是最高级）；摇晃让水果重新滚动。选目标时会暂停，点空白不会投放水果。</p>
+      <p class="help-footnote">进度和最高分保存在当前浏览器。清除网站数据会清除记录。</p>
+      <button class="primary-button full-width" data-close="help-dialog">知道啦，去玩吧</button>
+    </dialog>
+
+    <dialog id="restart-dialog" class="dialog small-dialog">
+      <span class="dialog-kicker">再种下一颗小快乐</span><h2>重新开始这一局？</h2><p>当前这篮水果会清空，<br />最高纪录会好好保留。</p>
+      <div class="dialog-actions"><button class="secondary-button" data-close="restart-dialog">接着玩</button><button class="primary-button" id="confirm-restart">重新开始</button></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <noscript><div class="noscript">请开启浏览器 JavaScript，才能开始游戏。</div></noscript>
+  </body>
+</html>
