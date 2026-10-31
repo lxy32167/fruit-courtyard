@@ -4,6 +4,10 @@
 
 游戏入口：https://lxy32167.github.io/fruit-courtyard/
 
+箭头出逃入口：https://lxy32167.github.io/fruit-courtyard/arrows/
+
+`arrows/` 是独立的 iPad 箭头解谜游戏，包含 4,852 个从用户提供安装包提取的关卡布局，支持经典闯关、每日一题、三分钟挑战、提示、缩放平移、存档与深色模式。所有关卡已在本实现的基础碰撞规则下验证可解；主线重新排序，特殊箭头连锁行为尚未还原。运行 `python3 arrows/serve.py` 可在本地启动，完整说明见 `arrows/README.txt`。
+
 ## 本地运行
 
 ```sh
